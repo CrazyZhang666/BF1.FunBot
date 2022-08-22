@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BF1.FunBot", "BF1.FunBot.csproj", "{96C27994-8103-4641-A42A-C66DA7804FC2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96C27994-8103-4641-A42A-C66DA7804FC2}.Debug|x64.ActiveCfg = Debug|x64
+		{96C27994-8103-4641-A42A-C66DA7804FC2}.Debug|x64.Build.0 = Debug|x64
+		{96C27994-8103-4641-A42A-C66DA7804FC2}.Release|x64.ActiveCfg = Release|x64
+		{96C27994-8103-4641-A42A-C66DA7804FC2}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1CAE8E55-FE91-4AE1-9281-178905B552B9}
+	EndGlobalSection
+EndGlobal
