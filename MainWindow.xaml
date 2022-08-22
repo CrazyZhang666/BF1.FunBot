@@ -91,7 +91,8 @@
             <CheckBox
                 Margin="5"
                 Content="启动机器人（快捷键：F9）"
-                IsChecked="{Binding MainModel.IsRunFunBot, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding MainModel.IsRunFunBot, UpdateSourceTrigger=PropertyChanged}"
+                IsEnabled="{Binding MainModel.IsFunBotEnable}" />
             <TextBlock Style="{StaticResource TextBlockStyle_Hint}">
                 提示：按F9可以切换机器人开关，按F10退出程序
             </TextBlock>

@@ -1,5 +1,6 @@
 ﻿using BF1.FunBot.Models;
 using BF1.FunBot.Features.Core;
+using BF1.FunBot.Features.Utils;
 
 namespace BF1.FunBot;
 
@@ -8,18 +9,33 @@ namespace BF1.FunBot;
 /// </summary>
 public partial class MainWindow : Window
 {
+    /// <summary>
+    /// 主窗口数据模型
+    /// </summary>
     public MainModel MainModel { get; set; } = new();
 
-    // 快捷键
+    /// <summary>
+    /// 快捷键
+    /// </summary>
     private HotKeys MainHotKeys = new();
 
+    /// <summary>
+    /// 主屏幕宽度
+    /// </summary>
     private int PrimaryScreenWidth = (int)SystemParameters.PrimaryScreenWidth;
+    /// <summary>
+    /// 主屏幕高度
+    /// </summary>
     private int PrimaryScreenHeight = (int)SystemParameters.PrimaryScreenHeight;
 
     /// <summary>
     /// 玩家是否死亡
     /// </summary>
-    private bool isPlayerDeath = true;
+    private bool IsPlayerDeath = true;
+    /// <summary>
+    /// 地图相机高度
+    /// </summary>
+    private float MapCameraZ = 0;
 
     public MainWindow()
     {
@@ -145,13 +161,14 @@ public partial class MainWindow : Window
             MainModel.GameCameraZ = view_matrix4x4.M44;
 
             var baseAddress = Player.GetLocalPlayer();
-            // 士兵基址
-            var cse_baseAddress = Memory.Read<long>(baseAddress + 0x1D48);
-
-            isPlayerDeath = cse_baseAddress == 0;
+            // 判断玩家是否死亡
+            IsPlayerDeath = Memory.Read<long>(baseAddress + 0x1D48) == 0;
 
             // 服务器地图名称
             var mapName = Memory.ReadString(Offsets.OFFSET_CLIENTGAMECONTEXT, Offsets.ServerMapName, 64);
+            MapCameraZ = PlayerUtil.GetMapCameraZ(mapName);
+
+            MainModel.IsRunFunBot = MapCameraZ == 0;
 
             //////////////////////
 
@@ -184,7 +201,7 @@ public partial class MainWindow : Window
                     //}
 
                     // 玩家在部署界面
-                    while (MainModel.IsRunFunBot && m_isTopWindow && isPlayerDeath && MainModel.GameCameraZ > 430)
+                    while (MainModel.IsRunFunBot && m_isTopWindow && IsPlayerDeath && MainModel.GameCameraZ > MapCameraZ)
                     {
                         AddRunningLog("玩家处于部署界面");
 
@@ -210,7 +227,7 @@ public partial class MainWindow : Window
                     }
 
                     // 玩家死亡
-                    while (MainModel.IsRunFunBot && m_isTopWindow && isPlayerDeath && MainModel.GameCameraZ < 430)
+                    while (MainModel.IsRunFunBot && m_isTopWindow && IsPlayerDeath && MainModel.GameCameraZ < MapCameraZ)
                     {
                         AddRunningLog("玩家死亡");
 

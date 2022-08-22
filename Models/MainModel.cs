@@ -6,6 +6,16 @@ public class MainModel : ObservableObject
 {
     ////////////////////////////////////////
 
+    private bool _isFunBotEnable;
+    /// <summary>
+    /// 是否启用机器人
+    /// </summary>
+    public bool IsFunBotEnable
+    {
+        get => _isFunBotEnable;
+        set => SetProperty(ref _isFunBotEnable, value);
+    }
+
     private bool _isRunFunBot;
     /// <summary>
     /// 是否运行机器人

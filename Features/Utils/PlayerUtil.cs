@@ -25,7 +25,7 @@ public static class PlayerUtil
     /// <returns></returns>
     public static string GetMapPrevImage(string originMapName)
     {
-        int index = MapData.AllMapInfo.FindIndex(var => var.English == originMapName);
+        var index = MapData.AllMapInfo.FindIndex(var => var.English == originMapName);
         if (index != -1)
             return MapData.AllMapInfo[index].Image;
         else
@@ -43,6 +43,6 @@ public static class PlayerUtil
         if (index != -1)
             return MapData.AllMapInfo[index].CameraZ;
         else
-            return 450f;
+            return 0f;
     }
 }
