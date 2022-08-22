@@ -13,7 +13,10 @@ public partial class MainWindow : Window
     /// 主窗口数据模型
     /// </summary>
     public MainModel MainModel { get; set; } = new();
-
+    /// <summary>
+    /// 战地1窗口数据
+    /// </summary>
+    private WindowData Bf1WindowData { get; set; }
     /// <summary>
     /// 快捷键
     /// </summary>
@@ -32,6 +35,10 @@ public partial class MainWindow : Window
     /// 玩家是否死亡
     /// </summary>
     private bool IsPlayerDeath = true;
+    /// <summary>
+    /// 记录玩家死亡时的相机Z
+    /// </summary>
+    private float PlayerDeathCameraZ = 0;
     /// <summary>
     /// 地图相机高度
     /// </summary>
@@ -53,11 +60,9 @@ public partial class MainWindow : Window
             {
                 AddRunningLog("战地1内存模块初始化成功");
                 AddRunningLog("等待玩家操作...");
-                AddRunningLog("");
                 AddRunningLog($"进程ID：{Memory.Bf1ProcessID}");
                 AddRunningLog($"窗口句柄：{Memory.Bf1WinHandle}");
                 AddRunningLog($"进程句柄：{Memory.Bf1ProHandle}");
-                AddRunningLog("");
                 AddRunningLog($"主显示器屏幕分辨率：{PrimaryScreenWidth} x {PrimaryScreenHeight}");
             }
             else
@@ -106,8 +111,8 @@ public partial class MainWindow : Window
         switch (Id)
         {
             case (int)WinVK.F5:
-                MainModel.GameDeployX = MainModel.GameMouseX;
-                MainModel.GameDeployY = MainModel.GameMouseY;
+                MainModel.GameDeployX = MainModel.ScreenMouseX;
+                MainModel.GameDeployY = MainModel.ScreenMouseY;
                 Console.Beep(500, 75);
                 break;
             case (int)WinVK.F9:
@@ -138,16 +143,19 @@ public partial class MainWindow : Window
     {
         while (true)
         {
-            var windowData = Memory.GetGameWindowData();
-            MainModel.GameResWidth = windowData.Width;
-            MainModel.GameResHeight = windowData.Height;
+            Bf1WindowData = Memory.GetGameWindowData();
+            MainModel.GameResWidth = Bf1WindowData.Width;
+            MainModel.GameResHeight = Bf1WindowData.Height;
 
             WinAPI.GetCursorPos(out var point);
-            MainModel.GameMouseX = windowData.Width == -1 ? windowData.Left : point.X - windowData.Left;
-            MainModel.GameMouseY = windowData.Height == -1 ? windowData.Top : point.Y - windowData.Top;
+            MainModel.ScreenMouseX = point.X;
+            MainModel.ScreenMouseY = point.Y;
 
-            MainModel.GameMouseX = MainModel.GameMouseX >= 0 && MainModel.GameMouseX <= windowData.Width ? MainModel.GameMouseX : 0;
-            MainModel.GameMouseY = MainModel.GameMouseY >= 0 && MainModel.GameMouseY <= windowData.Height ? MainModel.GameMouseY : 0;
+            MainModel.GameMouseX = Bf1WindowData.Width == -1 ? Bf1WindowData.Left : point.X - Bf1WindowData.Left;
+            MainModel.GameMouseY = Bf1WindowData.Height == -1 ? Bf1WindowData.Top : point.Y - Bf1WindowData.Top;
+
+            MainModel.GameMouseX = MainModel.GameMouseX >= 0 && MainModel.GameMouseX <= Bf1WindowData.Width ? MainModel.GameMouseX : 0;
+            MainModel.GameMouseY = MainModel.GameMouseY >= 0 && MainModel.GameMouseY <= Bf1WindowData.Height ? MainModel.GameMouseY : 0;
 
             if (MainModel.GameMouseX == 0 || MainModel.GameMouseY == 0)
                 MainModel.GameMouseX = MainModel.GameMouseY = 0;
@@ -163,12 +171,27 @@ public partial class MainWindow : Window
             var baseAddress = Player.GetLocalPlayer();
             // 判断玩家是否死亡
             IsPlayerDeath = Memory.Read<long>(baseAddress + 0x1D48) == 0;
+            // 记录玩家死亡时的相机Z
+            if (IsPlayerDeath)
+            {
+                PlayerDeathCameraZ = view_matrix4x4.M44;
+            }
 
             // 服务器地图名称
             var mapName = Memory.ReadString(Offsets.OFFSET_CLIENTGAMECONTEXT, Offsets.ServerMapName, 64);
-            MapCameraZ = PlayerUtil.GetMapCameraZ(mapName);
+            MainModel.CurrentMapName = PlayerUtil.GetMapChsName(mapName);
+            MainModel.CurrentMapImage = PlayerUtil.GetMapPrevImage(mapName);
 
-            MainModel.IsRunFunBot = MapCameraZ == 0;
+            MapCameraZ = PlayerUtil.GetMapCameraZ(mapName);
+            if (MapCameraZ == 0)
+            {
+                MainModel.IsRunFunBot = false;
+                MainModel.IsFunBotEnable = false;
+            }
+            else
+            {
+                MainModel.IsFunBotEnable = true;
+            }
 
             //////////////////////
 
@@ -206,24 +229,25 @@ public partial class MainWindow : Window
                         AddRunningLog("玩家处于部署界面");
 
                         AddRunningLog("尝试移动鼠标到自定义游戏部署点");
-                        MoveGameMouse();
-                        Thread.Sleep(200);
-                        MoveGameMouse();
-                        Thread.Sleep(200);
-                        MoveGameMouse();
+                        WinAPI.SetCursorPos(MainModel.GameDeployX, MainModel.GameDeployY);
                         Thread.Sleep(200);
 
-                        Thread.Sleep(1000);
-                        AddRunningLog("尝试按下鼠标左键");
-                        WinAPI.Mouse_Event(MouseEventFlag.LeftDown, 0, 0, 0, 0);
-                        Thread.Sleep(200);
-                        WinAPI.Mouse_Event(MouseEventFlag.LeftUp, 0, 0, 0, 0);
+                        // 判断鼠标是否到了指定位置
+                        WinAPI.GetCursorPos(out var point);
+                        if (point.X == MainModel.GameDeployX && point.Y == MainModel.GameDeployY)
+                        {
+                            Thread.Sleep(1000);
+                            AddRunningLog("尝试按下鼠标左键");
+                            WinAPI.Mouse_Event(MouseEventFlag.LeftDown, 0, 0, 0, 0);
+                            Thread.Sleep(200);
+                            WinAPI.Mouse_Event(MouseEventFlag.LeftUp, 0, 0, 0, 0);
 
-                        Thread.Sleep(1000);
-                        AddRunningLog("尝试按下空格键键");
-                        WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 0, 0);
-                        Thread.Sleep(200);
-                        WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 2, 0);
+                            Thread.Sleep(1000);
+                            AddRunningLog("尝试按下空格键");
+                            WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 0, 0);
+                            Thread.Sleep(200);
+                            WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 2, 0);
+                        }
                     }
 
                     // 玩家死亡
@@ -231,8 +255,8 @@ public partial class MainWindow : Window
                     {
                         AddRunningLog("玩家死亡");
 
-                        Thread.Sleep(2000);
-                        AddRunningLog("尝试按下空格键键");
+                        Thread.Sleep(1000);
+                        AddRunningLog("尝试按下空格键");
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 0, 0);
                         Thread.Sleep(200);
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 2, 0);
@@ -266,23 +290,5 @@ public partial class MainWindow : Window
 
             Thread.Sleep(1);
         }
-    }
-
-    /// <summary>
-    /// 移动游戏内鼠标
-    /// </summary>
-    private void MoveGameMouse()
-    {
-        var windowData = Memory.GetGameWindowData();
-        var point = new POINT
-        {
-            X = windowData.Left + MainModel.GameDeployX,
-            Y = windowData.Top + MainModel.GameDeployY
-        };
-        WinAPI.SetCursorPos(point.X, point.Y);
-
-        point.X = point.X * 65535 / PrimaryScreenWidth;
-        point.Y = point.Y * 65535 / PrimaryScreenHeight;
-        WinAPI.Mouse_Event(MouseEventFlag.Move | MouseEventFlag.Absolute, point.X, point.Y, 0, 0);
     }
 }

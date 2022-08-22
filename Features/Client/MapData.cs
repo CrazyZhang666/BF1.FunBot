@@ -21,8 +21,8 @@ public static class MapData
         new() { English="ID_M_MP_LEVEL_ITALIANCOAST", Chinese="帝国边境", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_ItalianCoast_LandscapeLarge-1503eec7.jpg" },
         new() { English="ID_M_MP_LEVEL_CHATEAU", Chinese="流血宴厅", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Chateau_LandscapeLarge-244d5987.jpg" },
         new() { English="ID_M_MP_LEVEL_SCAR", Chinese="圣康坦的伤痕", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Scar_LandscapeLarge-ee25fbd6.jpg" },
-        new() { English="ID_M_MP_LEVEL_DESERT", Chinese="西奈沙漠", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Desert_LandscapeLarge-d8f749da.jpg" },
-        new() { English="ID_M_MP_LEVEL_AMIENS", Chinese="亚眠", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Amiens_LandscapeLarge-e195589d.jpg" },
+        new() { English="ID_M_MP_LEVEL_DESERT", Chinese="西奈沙漠", CameraZ=1720, Image=@"\Assets\Images\Client\Maps\MP_Desert_LandscapeLarge-d8f749da.jpg" },
+        new() { English="ID_M_MP_LEVEL_AMIENS", Chinese="亚眠", CameraZ=430, Image=@"\Assets\Images\Client\Maps\MP_Amiens_LandscapeLarge-e195589d.jpg" },
         new() { English="ID_M_MP_LEVEL_SUEZ", Chinese="苏伊士", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Suez_LandscapeLarge-f630fc76.jpg" },
         new() { English="ID_M_MP_LEVEL_FAOFORTRESS", Chinese="法欧堡", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_FaoFortress_LandscapeLarge-cad1748e.jpg" },
         new() { English="ID_M_MP_LEVEL_GIANT", Chinese="庞然暗影", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Giant_LandscapeLarge-dd0b93ef.jpg" },
@@ -45,7 +45,7 @@ public static class MapData
         new() { English="ID_M_MP_LEVEL_OFFENSIVE", Chinese="索姆河", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Offensive_LandscapeLarge-6dabdea3.jpg" },
         new() { English="ID_M_MP_LEVEL_HELL", Chinese="帕斯尚尔", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Hell_LandscapeLarge-7176911c.jpg" },
         new() { English="ID_M_MP_LEVEL_RIVER", Chinese="卡波雷托", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_River_LandscapeLarge-21443ae9.jpg" },
-            new() { English="ID_M_MP_LEVEL_ALPS", Chinese="剃刀边缘", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Alps_LandscapeLarge-7ab30e3e.jpg" },
+        new() { English="ID_M_MP_LEVEL_ALPS", Chinese="剃刀边缘", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Alps_LandscapeLarge-7ab30e3e.jpg" },
         new() { English="ID_M_MP_LEVEL_BLITZ", Chinese="伦敦的呼唤：夜袭", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Blitz_LandscapeLarge-5e26212f.jpg" },
         new() { English="ID_M_MP_LEVEL_LONDON", Chinese="伦敦的呼唤：灾祸", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_London_LandscapeLarge-0b51fe46.jpg" }
     };

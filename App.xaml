@@ -8,6 +8,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/Styles/GlobalStyle.xaml" />
+                <ResourceDictionary Source="Assets/Styles/LabelStyle.xaml" />
                 <ResourceDictionary Source="Assets/Styles/TextBlockStyle.xaml" />
                 <ResourceDictionary Source="Assets/Styles/ScrollViewerStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>

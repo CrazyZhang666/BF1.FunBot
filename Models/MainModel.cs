@@ -26,14 +26,24 @@ public class MainModel : ObservableObject
         set => SetProperty(ref _isRunFunBot, value);
     }
 
-    private string _playerState;
+    private string _currentMapImage;
     /// <summary>
-    /// 玩家状态
+    /// 当前地图图片
     /// </summary>
-    public string PlayerState
+    public string CurrentMapImage
     {
-        get => _playerState;
-        set => SetProperty(ref _playerState, value);
+        get => _currentMapImage;
+        set => SetProperty(ref _currentMapImage, value);
+    }
+
+    private string _currentMapName;
+    /// <summary>
+    /// 当前地图名称
+    /// </summary>
+    public string CurrentMapName
+    {
+        get => _currentMapName;
+        set => SetProperty(ref _currentMapName, value);
     }
 
     ////////////////////////////////////////
@@ -114,6 +124,27 @@ public class MainModel : ObservableObject
 
     ////////////////////////////////////////
 
+    private int _screenMouseX;
+    /// <summary>
+    /// 屏幕鼠标坐标X
+    /// </summary>
+    public int ScreenMouseX
+    {
+        get => _screenMouseX;
+        set => SetProperty(ref _screenMouseX, value);
+    }
+
+    private int _screenMouseY;
+    /// <summary>
+    /// 屏幕鼠标坐标Y
+    /// </summary>
+    public int ScreenMouseY
+    {
+        get => _screenMouseY;
+        set => SetProperty(ref _screenMouseY, value);
+    }
+
+    ////////////////////////////////////////
 
     private int _gameDeployX;
     /// <summary>

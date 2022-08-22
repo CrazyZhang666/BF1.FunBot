@@ -8,9 +8,11 @@
     <Platforms>x64</Platforms>
     <StartupObject>BF1.FunBot.App</StartupObject>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Images\Andorid.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\Andorid.ico" />
     <None Remove="Assets\Images\Client\Maps\MP_Alps_LandscapeLarge-7ab30e3e.jpg" />
     <None Remove="Assets\Images\Client\Maps\MP_Amiens_LandscapeLarge-e195589d.jpg" />
     <None Remove="Assets\Images\Client\Maps\MP_Beachhead_LandscapeLarge-5a13c655.jpg" />
@@ -46,10 +48,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <Content Include="Assets\Images\Andorid.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="Emoji.Wpf" Version="0.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\Andorid.ico" />
     <Resource Include="Assets\Images\Client\Maps\MP_Alps_LandscapeLarge-7ab30e3e.jpg" />
     <Resource Include="Assets\Images\Client\Maps\MP_Amiens_LandscapeLarge-e195589d.jpg" />
     <Resource Include="Assets\Images\Client\Maps\MP_Beachhead_LandscapeLarge-5a13c655.jpg" />
