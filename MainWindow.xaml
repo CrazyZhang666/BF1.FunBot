@@ -34,8 +34,10 @@
             Grid.Column="0"
             Margin="5"
             Padding="5"
+            HorizontalScrollBarVisibility="Disabled"
             IsReadOnly="True"
-            TextWrapping="Wrap" />
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
         <!--  ###############  -->
         <StackPanel Grid.Column="1">
             <TextBlock>
@@ -63,17 +65,20 @@
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
-            <TextBlock>
+
+            <TextBlock Margin="5,15,5,5">
                 <TextBlock.Text>
-                    <MultiBinding FallbackValue="游戏部署点坐标：" StringFormat="游戏部署点坐标：{0}, {1}">
+                    <MultiBinding FallbackValue="自定义游戏部署点坐标：" StringFormat="游戏部署点坐标：{0}, {1}">
                         <Binding Path="MainModel.GameDeployX" />
                         <Binding Path="MainModel.GameDeployY" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
+            <TextBlock Style="{StaticResource TextBlockStyle_Hint}">
+                提示：按F5记录部署点坐标
+            </TextBlock>
 
-            <TextBlock />
-            <TextBlock>
+            <TextBlock Margin="5,15,5,5">
                 <TextBlock.Text>
                     <MultiBinding FallbackValue="玩家状态：" StringFormat="玩家状态：{0}">
                         <Binding Path="MainModel.PlayerState" />
@@ -87,6 +92,9 @@
                 Margin="5"
                 Content="启动机器人（快捷键：F9）"
                 IsChecked="{Binding MainModel.IsRunFunBot, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Style="{StaticResource TextBlockStyle_Hint}">
+                提示：按F9可以切换机器人开关，按F10退出程序
+            </TextBlock>
         </StackPanel>
     </Grid>
 

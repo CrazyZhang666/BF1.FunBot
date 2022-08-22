@@ -81,6 +81,7 @@ public partial class MainWindow : Window
         this.Dispatcher.Invoke(() =>
         {
             TextBox_RunningLog.AppendText($"[{DateTime.Now:MM/dd HH:mm:ss}] {logMsg}\r\n");
+            TextBox_RunningLog.ScrollToEnd();
         });
     }
 
@@ -95,6 +96,10 @@ public partial class MainWindow : Window
                 break;
             case (int)WinVK.F9:
                 MainModel.IsRunFunBot = !MainModel.IsRunFunBot;
+                this.Dispatcher.Invoke(() =>
+                {
+                    InputLanguageManager.Current.CurrentInputLanguage = new CultureInfo("en-US");
+                });
                 if (MainModel.IsRunFunBot)
                 {
                     Console.Beep(700, 75);
@@ -145,6 +150,9 @@ public partial class MainWindow : Window
 
             isPlayerDeath = cse_baseAddress == 0;
 
+            // 服务器地图名称
+            var mapName = Memory.ReadString(Offsets.OFFSET_CLIENTGAMECONTEXT, Offsets.ServerMapName, 64);
+
             //////////////////////
 
             Thread.Sleep(1);
@@ -178,14 +186,24 @@ public partial class MainWindow : Window
                     // 玩家在部署界面
                     while (MainModel.IsRunFunBot && m_isTopWindow && isPlayerDeath && MainModel.GameCameraZ > 430)
                     {
+                        AddRunningLog("玩家处于部署界面");
+
+                        AddRunningLog("尝试移动鼠标到自定义游戏部署点");
                         MoveGameMouse();
+                        Thread.Sleep(200);
+                        MoveGameMouse();
+                        Thread.Sleep(200);
+                        MoveGameMouse();
+                        Thread.Sleep(200);
 
                         Thread.Sleep(1000);
+                        AddRunningLog("尝试按下鼠标左键");
                         WinAPI.Mouse_Event(MouseEventFlag.LeftDown, 0, 0, 0, 0);
                         Thread.Sleep(200);
                         WinAPI.Mouse_Event(MouseEventFlag.LeftUp, 0, 0, 0, 0);
 
                         Thread.Sleep(1000);
+                        AddRunningLog("尝试按下空格键键");
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 0, 0);
                         Thread.Sleep(200);
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 2, 0);
@@ -194,7 +212,10 @@ public partial class MainWindow : Window
                     // 玩家死亡
                     while (MainModel.IsRunFunBot && m_isTopWindow && isPlayerDeath && MainModel.GameCameraZ < 430)
                     {
-                        Thread.Sleep(1000);
+                        AddRunningLog("玩家死亡");
+
+                        Thread.Sleep(2000);
+                        AddRunningLog("尝试按下空格键键");
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 0, 0);
                         Thread.Sleep(200);
                         WinAPI.Keybd_Event(WinVK.SPACE, WinAPI.MapVirtualKey(WinVK.SPACE, 0), 2, 0);
