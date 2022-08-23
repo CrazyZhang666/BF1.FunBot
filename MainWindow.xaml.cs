@@ -1,6 +1,9 @@
 ﻿using BF1.FunBot.Models;
+using BF1.FunBot.Common.Utils;
 using BF1.FunBot.Features.Core;
 using BF1.FunBot.Features.Utils;
+using BF1.FunBot.Features.Config;
+using BF1.FunBot.Features.Client;
 
 namespace BF1.FunBot;
 
@@ -14,13 +17,9 @@ public partial class MainWindow : Window
     /// </summary>
     public MainModel MainModel { get; set; } = new();
     /// <summary>
-    /// 战地1窗口数据
-    /// </summary>
-    private WindowData Bf1WindowData { get; set; }
-    /// <summary>
     /// 快捷键
     /// </summary>
-    private HotKeys MainHotKeys = new();
+    private HotKeys HotKeys = new();
 
     /// <summary>
     /// 主屏幕宽度
@@ -36,13 +35,14 @@ public partial class MainWindow : Window
     /// </summary>
     private bool IsPlayerDeath = true;
     /// <summary>
-    /// 记录玩家死亡时的相机Z
-    /// </summary>
-    private float PlayerDeathCameraZ = 0;
-    /// <summary>
     /// 地图相机高度
     /// </summary>
     private float MapCameraZ = 0;
+
+    /// <summary>
+    /// 部署点配置文件
+    /// </summary>
+    private List<DeployConfig> DeployConfigs = new();
 
     public MainWindow()
     {
@@ -64,12 +64,57 @@ public partial class MainWindow : Window
                 AddRunningLog($"窗口句柄：{Memory.Bf1WinHandle}");
                 AddRunningLog($"进程句柄：{Memory.Bf1ProHandle}");
                 AddRunningLog($"主显示器屏幕分辨率：{PrimaryScreenWidth} x {PrimaryScreenHeight}");
+
+                // 创建文件夹
+                Directory.CreateDirectory(FileUtil.D_Config_Path);
+                Directory.CreateDirectory(FileUtil.D_Log_Path);
+                // 如果配置文件不存在则创建
+                if (!File.Exists(FileUtil.F_Deploy_Path))
+                {
+                    foreach (var item in MapData.AllMapInfo)
+                    {
+                        if (item.Chinese == "大厅菜单")
+                            continue;
+
+                        DeployConfigs.Add(new DeployConfig()
+                        {
+                            MapName = item.Chinese,
+                            DeployX = 0,
+                            DeployY = 0
+                        });
+                    }
+
+                    File.WriteAllText(FileUtil.F_Deploy_Path, JsonUtil.JsonSeri(DeployConfigs));
+                }
+                // 如果配置文件存在则读取
+                if (File.Exists(FileUtil.F_Deploy_Path))
+                {
+                    using (var streamReader = new StreamReader(FileUtil.F_Deploy_Path))
+                    {
+                        DeployConfigs = JsonUtil.JsonDese<List<DeployConfig>>(streamReader.ReadToEnd());
+
+                        var index = DeployConfigs.FindIndex(var => var.MapName == MainModel.CurrentMapName);
+                        if (index != -1)
+                        {
+                            MainModel.GameDeployX = DeployConfigs[index].DeployX;
+                            MainModel.GameDeployY = DeployConfigs[index].DeployY;
+                        }
+                    }
+                }
             }
             else
             {
                 AddRunningLog("战地1内存模块初始化失败，请重启程序");
+                Task.Delay(2000).Wait();
+                this.Dispatcher.Invoke(() =>
+                {
+                    Application.Current.Shutdown();
+                    return;
+                });
             }
         });
+
+        InputLanguageManager.Current.CurrentInputLanguage = new CultureInfo("en-US");
 
         // 后台更新线程
         var thread1 = new Thread(UpdateData);
@@ -81,16 +126,18 @@ public partial class MainWindow : Window
         thread2.IsBackground = true;
         thread2.Start();
 
-        MainHotKeys.AddKey(WinVK.F5);
-        MainHotKeys.AddKey(WinVK.F9);
-        MainHotKeys.AddKey(WinVK.F10);
-        MainHotKeys.KeyDownEvent += MainHotKeys_KeyDownEvent;
+        HotKeys.AddKey(WinVK.F5);
+        HotKeys.AddKey(WinVK.F9);
+        HotKeys.AddKey(WinVK.F10);
+        HotKeys.KeyDownEvent += MainHotKeys_KeyDownEvent;
     }
 
     private void Window_Main_Closing(object sender, CancelEventArgs e)
     {
         Memory.CloseHandle();
-        MainHotKeys.Dispose();
+        HotKeys.Dispose();
+
+        File.WriteAllText(FileUtil.F_Deploy_Path, JsonUtil.JsonSeri(DeployConfigs));
     }
 
     /// <summary>
@@ -101,6 +148,9 @@ public partial class MainWindow : Window
     {
         this.Dispatcher.Invoke(() =>
         {
+            if (TextBox_RunningLog.LineCount >= 1000)
+                TextBox_RunningLog.Clear();
+
             TextBox_RunningLog.AppendText($"[{DateTime.Now:MM/dd HH:mm:ss}] {logMsg}\r\n");
             TextBox_RunningLog.ScrollToEnd();
         });
@@ -111,26 +161,17 @@ public partial class MainWindow : Window
         switch (Id)
         {
             case (int)WinVK.F5:
-                MainModel.GameDeployX = MainModel.ScreenMouseX;
-                MainModel.GameDeployY = MainModel.ScreenMouseY;
-                Console.Beep(500, 75);
+                RecordGameDeployPoint();
                 break;
             case (int)WinVK.F9:
                 MainModel.IsRunFunBot = !MainModel.IsRunFunBot;
-                this.Dispatcher.Invoke(() =>
-                {
-                    InputLanguageManager.Current.CurrentInputLanguage = new CultureInfo("en-US");
-                });
                 if (MainModel.IsRunFunBot)
-                {
                     Console.Beep(700, 75);
-                }
                 else
-                {
                     Console.Beep(600, 75);
-                }
                 break;
             case (int)WinVK.F10:
+                Console.Beep(400, 75);
                 Application.Current.Shutdown();
                 break;
         }
@@ -143,22 +184,9 @@ public partial class MainWindow : Window
     {
         while (true)
         {
-            Bf1WindowData = Memory.GetGameWindowData();
-            MainModel.GameResWidth = Bf1WindowData.Width;
-            MainModel.GameResHeight = Bf1WindowData.Height;
-
             WinAPI.GetCursorPos(out var point);
             MainModel.ScreenMouseX = point.X;
             MainModel.ScreenMouseY = point.Y;
-
-            MainModel.GameMouseX = Bf1WindowData.Width == -1 ? Bf1WindowData.Left : point.X - Bf1WindowData.Left;
-            MainModel.GameMouseY = Bf1WindowData.Height == -1 ? Bf1WindowData.Top : point.Y - Bf1WindowData.Top;
-
-            MainModel.GameMouseX = MainModel.GameMouseX >= 0 && MainModel.GameMouseX <= Bf1WindowData.Width ? MainModel.GameMouseX : 0;
-            MainModel.GameMouseY = MainModel.GameMouseY >= 0 && MainModel.GameMouseY <= Bf1WindowData.Height ? MainModel.GameMouseY : 0;
-
-            if (MainModel.GameMouseX == 0 || MainModel.GameMouseY == 0)
-                MainModel.GameMouseX = MainModel.GameMouseY = 0;
 
             // 矩阵信息
             var view_offset = Memory.Read<long>(Offsets.OFFSET_GAMERENDERER, new int[] { 0x60 });
@@ -171,11 +199,6 @@ public partial class MainWindow : Window
             var baseAddress = Player.GetLocalPlayer();
             // 判断玩家是否死亡
             IsPlayerDeath = Memory.Read<long>(baseAddress + 0x1D48) == 0;
-            // 记录玩家死亡时的相机Z
-            if (IsPlayerDeath)
-            {
-                PlayerDeathCameraZ = view_matrix4x4.M44;
-            }
 
             // 服务器地图名称
             var mapName = Memory.ReadString(Offsets.OFFSET_CLIENTGAMECONTEXT, Offsets.ServerMapName, 64);
@@ -216,12 +239,12 @@ public partial class MainWindow : Window
                 if (m_isTopWindow)
                 {
                     // 开始奔跑
-                    //if (!isShiftW)
-                    //{
-                    //    WinAPI.Keybd_Event(WinVK.W, WinAPI.MapVirtualKey(WinVK.W, 0), 0, 0);
-                    //    WinAPI.Keybd_Event(WinVK.LSHIFT, WinAPI.MapVirtualKey(WinVK.LSHIFT, 0), 0, 0);
-                    //    isShiftW = true;
-                    //}
+                    if (!isShiftW)
+                    {
+                        WinAPI.Keybd_Event(WinVK.W, WinAPI.MapVirtualKey(WinVK.W, 0), 0, 0);
+                        WinAPI.Keybd_Event(WinVK.LSHIFT, WinAPI.MapVirtualKey(WinVK.LSHIFT, 0), 0, 0);
+                        isShiftW = true;
+                    }
 
                     // 玩家在部署界面
                     while (MainModel.IsRunFunBot && m_isTopWindow && IsPlayerDeath && MainModel.GameCameraZ > MapCameraZ)
@@ -289,6 +312,26 @@ public partial class MainWindow : Window
             //////////////////////
 
             Thread.Sleep(1);
+        }
+    }
+
+    /// <summary>
+    /// 记录游戏部署点坐标
+    /// </summary>
+    private void RecordGameDeployPoint()
+    {
+        var index = DeployConfigs.FindIndex(var => var.MapName == MainModel.CurrentMapName);
+        if (index != -1)
+        {
+            MainModel.GameDeployX = MainModel.ScreenMouseX;
+            MainModel.GameDeployY = MainModel.ScreenMouseY;
+
+            DeployConfigs[index].DeployX = MainModel.GameDeployX;
+            DeployConfigs[index].DeployY = MainModel.GameDeployY;
+
+            File.WriteAllText(FileUtil.F_Deploy_Path, JsonUtil.JsonSeri(DeployConfigs));
+
+            Console.Beep(500, 75);
         }
     }
 }

@@ -48,28 +48,6 @@ public class MainModel : ObservableObject
 
     ////////////////////////////////////////
 
-    private int _gameResWidth;
-    /// <summary>
-    /// 游戏分辨率宽度
-    /// </summary>
-    public int GameResWidth
-    {
-        get => _gameResWidth;
-        set => SetProperty(ref _gameResWidth, value);
-    }
-
-    private int _gameResHeight;
-    /// <summary>
-    /// 游戏分辨率高度
-    /// </summary>
-    public int GameResHeight
-    {
-        get => _gameResHeight;
-        set => SetProperty(ref _gameResHeight, value);
-    }
-
-    ////////////////////////////////////////
-
     private float _gameCameraX;
     /// <summary>
     /// 游戏相机坐标X
@@ -98,28 +76,6 @@ public class MainModel : ObservableObject
     {
         get => _gameCameraZ;
         set => SetProperty(ref _gameCameraZ, value);
-    }
-
-    ////////////////////////////////////////
-
-    private int _gameMouseX;
-    /// <summary>
-    /// 游戏鼠标坐标X
-    /// </summary>
-    public int GameMouseX
-    {
-        get => _gameMouseX;
-        set => SetProperty(ref _gameMouseX, value);
-    }
-
-    private int _gameMouseY;
-    /// <summary>
-    /// 游戏鼠标坐标Y
-    /// </summary>
-    public int GameMouseY
-    {
-        get => _gameMouseY;
-        set => SetProperty(ref _gameMouseY, value);
     }
 
     ////////////////////////////////////////

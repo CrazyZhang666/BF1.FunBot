@@ -33,7 +33,7 @@ public static class MapData
         new() { English="ID_M_MP_LEVEL_TRENCH", Chinese="尼维尔之夜", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Trench_LandscapeLarge-dbd1248f.jpg" },
         new() { English="ID_M_MP_LEVEL_SHOVELTOWN", Chinese="攻占托尔", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Shoveltown_LandscapeLarge-d0aa5920.jpg" },
         new() { English="ID_M_MP_LEVEL_BRIDGE", Chinese="勃鲁希洛夫关口", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Bridge_LandscapeLarge-5b7f1b62.jpg" },
-        new() { English="ID_M_MP_LEVEL_ISLANDS", Chinese="阿尔比恩", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Islands_LandscapeLarge-c9d8272b.jpg" },
+        new() { English="ID_M_MP_LEVEL_ISLANDS", Chinese="阿尔比恩", CameraZ=810, Image=@"\Assets\Images\Client\Maps\MP_Islands_LandscapeLarge-c9d8272b.jpg" },
         new() { English="ID_M_MP_LEVEL_RAVINES", Chinese="武普库夫山口", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Ravines_LandscapeLarge-1fe0d3f6.jpg" },
         new() { English="ID_M_MP_LEVEL_VALLEY", Chinese="加利西亚", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Valley_LandscapeLarge-8dc1c7ca.jpg" },
         new() { English="ID_M_MP_LEVEL_TSARITSYN", Chinese="察里津", CameraZ=0, Image=@"\Assets\Images\Client\Maps\MP_Tsaritsyn_LandscapeLarge-2dbd3bf5.jpg" },

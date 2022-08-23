@@ -12,6 +12,9 @@
                 <ResourceDictionary Source="Assets/Styles/LabelStyle.xaml" />
                 <ResourceDictionary Source="Assets/Styles/TextBlockStyle.xaml" />
                 <ResourceDictionary Source="Assets/Styles/ScrollViewerStyle.xaml" />
+
+                <ResourceDictionary Source="Assets/Styles/TextBoxStyle.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
