@@ -121,7 +121,7 @@
                 提示：按F9可以切换机器人开关，按F10退出程序
             </TextBlock>
             <TextBlock Style="{StaticResource TextBlockStyle_Hint}">
-                提示：目前支持阿尔比恩和西奈沙漠两张地图征服模式，暂时不支持的地图会自动禁用功能
+                提示：暂时不支持的地图会自动禁用功能，后续更新会陆续解禁
             </TextBlock>
         </StackPanel>
     </Grid>
