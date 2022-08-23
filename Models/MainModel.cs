@@ -121,6 +121,4 @@ public class MainModel : ObservableObject
         get => _gameDeployY;
         set => SetProperty(ref _gameDeployY, value);
     }
-
-    ////////////////////////////////////////
 }

@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Assets/Styles/ScrollViewerStyle.xaml" />
 
                 <ResourceDictionary Source="Assets/Styles/TextBoxStyle.xaml" />
+                <ResourceDictionary Source="Assets/Styles/ToggleButtonStyle.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
