@@ -26,6 +26,18 @@ public class MainModel : ObservableObject
         set => SetProperty(ref _isRunFunBot, value);
     }
 
+    private bool _isRunNoAFK;
+    /// <summary>
+    /// 是否运行挂机防踢
+    /// </summary>
+    public bool IsRunNoAFK
+    {
+        get => _isRunNoAFK;
+        set => SetProperty(ref _isRunNoAFK, value);
+    }
+
+    ////////////////////////////////////////
+
     private string _currentMapImage;
     /// <summary>
     /// 当前地图图片

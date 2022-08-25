@@ -117,14 +117,26 @@ public partial class MainWindow : Window
         InputLanguageManager.Current.CurrentInputLanguage = new CultureInfo("en-US");
 
         // 后台更新线程
-        var thread1 = new Thread(UpdateData);
-        thread1.IsBackground = true;
+        var thread1 = new Thread(UpdateData)
+        {
+            IsBackground = true
+        };
         thread1.Start();
 
         // 后台运行机器人线程
-        var thread2 = new Thread(RunFunBot);
-        thread2.IsBackground = true;
+        var thread2 = new Thread(RunFunBot)
+        {
+            IsBackground = true
+        };
         thread2.Start();
+
+        var timerNoAFK = new System.Timers.Timer()
+        {
+            AutoReset = true,
+            Interval = TimeSpan.FromSeconds(30).TotalMilliseconds
+        };
+        timerNoAFK.Elapsed += TimerNoAFK_Elapsed;
+        timerNoAFK.Start();
 
         HotKeys.AddKey(WinVK.F5);
         HotKeys.AddKey(WinVK.F9);
@@ -312,6 +324,20 @@ public partial class MainWindow : Window
             //////////////////////
 
             Thread.Sleep(1);
+        }
+    }
+
+    private void TimerNoAFK_Elapsed(object sender, ElapsedEventArgs e)
+    {
+        if (MainModel.IsRunNoAFK)
+        {
+            Memory.SetForegroundWindow();
+            Thread.Sleep(50);
+
+            WinAPI.Keybd_Event(WinVK.TAB, WinAPI.MapVirtualKey(WinVK.TAB, 0), 0, 0);
+            Thread.Sleep(3000);
+            WinAPI.Keybd_Event(WinVK.TAB, WinAPI.MapVirtualKey(WinVK.TAB, 0), 2, 0);
+            Thread.Sleep(50);
         }
     }
 
